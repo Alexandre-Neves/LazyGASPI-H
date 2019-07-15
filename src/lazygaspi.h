@@ -107,7 +107,4 @@ gaspi_return_t lazygaspi_clock();
  */
 gaspi_return_t lazygaspi_term();
 
-
-
-
 #endif
