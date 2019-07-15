@@ -16,23 +16,27 @@
 
 #include "lazygaspi.h"
 
-#define OUTPUT &std::cout
 
-#define DIE_ON_ERROR(function, msg)                                                                                 \
+#define DIE_ON_ERROR_OUT(function, msg, out)                                                                            \
     do {                                                                                                            \
-        *OUTPUT << "\n\nERROR: " << function << "[" << __FILE__ << ":" << __LINE__ << "]: " << msg << std::flush;   \
+        out << "ERROR: " << function << "[" << __FILE__ << ":" << __LINE__ << "]: " << msg << std::flush;       \
         abort();                                                                                                    \
     } while(0);
 
-#define SUCCESS_OR_DIE(f...)            \
+#define DIE_ON_ERROR(function, msg) DIE_ON_ERROR_OUT(function, msg, *info->out)
+
+#define SUCCESS_OR_DIE_OUT(out, f...)       \
     do {                                \
         const gaspi_return_t r = f;     \
         if (r == GASPI_ERROR)           \
-            DIE_ON_ERROR(#f, r);        \
+            DIE_ON_ERROR_OUT(#f, r, out);   \
     } while(0); 
 
+#define SUCCESS_OR_DIE(f...) SUCCESS_OR_DIE_OUT(*info->out, f)
 
-#define ASSERT(expr, function) { if(!(expr)) DIE_ON_ERROR(function, "Failed to assert that " << #expr) }
+#define ASSERT_OUT(out, expr, function) { if(!(expr)) DIE_ON_ERROR_OUT(function, "Failed to assert that " << #expr, out) }
+
+#define ASSERT(expr, function) ASSERT_OUT(*info->out, expr, function)
 
 #define GASPI_BARRIER gaspi_barrier(GASPI_GROUP_ALL, GASPI_BLOCK)
 
@@ -61,7 +65,7 @@ inline double get_time(){
  *  Returns:
  *  GASPI_SUCCESS on success, GASPI_ERROR (or other error codes) on error, or GASPI_TIMEOUT on timeout.
  */
-static gaspi_return_t setup_gaspi_output(const char* identifier, gaspi_rank_t id, std::ofstream** stream, 
+static gaspi_return_t gaspi_setup_output(const char* identifier, gaspi_rank_t id, std::ofstream** stream, 
                                          gaspi_group_t group = GASPI_GROUP_ALL){
     std::stringstream s; 
     s << "rm -f " << identifier << "*.out"; 
@@ -94,7 +98,7 @@ static gaspi_return_t gaspi_free(gaspi_queue_id_t q, int* free) {
     r = gaspi_queue_size(q, &queue_size);
     if(r != GASPI_SUCCESS) return r;
 
-    if(queue_size <= queue_max) return GASPI_ERR_MANY_Q_REQS;
+    if(queue_size > queue_max) return GASPI_ERR_MANY_Q_REQS;
     *free = queue_max - queue_size;
     return GASPI_SUCCESS;
 }
@@ -401,9 +405,9 @@ static gaspi_pointer_t get_pointer(gaspi_segment_id_t id, const char* notFoundMe
     auto r = gaspi_segment_ptr(id, &ptr);
     if(r != GASPI_SUCCESS){
         if(r == GASPI_ERR_INV_SEG){
-            if(notFoundMessage) {   DIE_ON_ERROR("gaspi_get_pointer", notFoundMessage); }
-            else                    DIE_ON_ERROR("gaspi_get_pointer", "Segment ID " << id << " was not found.");
-        } else                      DIE_ON_ERROR("gaspi_get_pointer", r);
+            if(notFoundMessage) {   DIE_ON_ERROR_OUT("gaspi_get_pointer", notFoundMessage, std::cout); }
+            else                    DIE_ON_ERROR_OUT("gaspi_get_pointer", "Segment ID " << id << " was not found.", std::cout);
+        } else                      DIE_ON_ERROR_OUT("gaspi_get_pointer", r, std::cout);
     }
     return ptr;
 };
