@@ -7,6 +7,8 @@
 #define SEGMENT_ID_INFO 0 
 #define SEGMENT_ID_ROWS 1
 
+#define FIRST_SEG_ID_AVAIL 2
+
 typedef unsigned long lazygaspi_id_t;
 typedef unsigned long lazygaspi_age_t;
 typedef unsigned long lazygaspi_slack_t;
