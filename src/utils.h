@@ -11,7 +11,7 @@
 #include <utility>
 
 #include "typedefs.h"
-#include "lazygaspi.h"
+#include "lazygaspi_h.h"
 #include "gaspi_utils.h"
 
 #define NOTIF_ID_ROW_WRITTEN 0

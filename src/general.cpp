@@ -1,4 +1,4 @@
-#include "lazygaspi.h"
+#include "lazygaspi_h.h"
 #include "utils.h"
 
 gaspi_return_t lazygaspi_get_info(LazyGaspiProcessInfo** info){
