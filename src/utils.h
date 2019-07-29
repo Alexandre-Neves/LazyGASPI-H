@@ -16,19 +16,43 @@
 
 #define NOTIF_ID_ROW_WRITTEN 0
 
-#ifdef DEBUG
-#define PRINT_DEBUG(msg) if(info->out) timestamp(*info->out) << " Rank " << info->id << " => " << msg << std::endl
+#if (defined (DEBUG) || defined (DEBUG_INTERNAL))
+#define PRINT_DEBUG_INTERNAL_OUT(out, msg) if(out){ *out << msg << std::endl; }\
+                                           else{ std::cout << msg << std::endl; }
+#define PRINT_DEBUG_INTERNAL(msg) PRINT_DEBUG_INTERNAL_OUT(info->out, msg)
 #else
-#define PRINT_DEBUG(msg)
+#define PRINT_DEBUG_INTERNAL_OUT(out, msg)
+#define PRINT_DEBUG_INTERNAL(msg)
 #endif
 
-#define ERROR_CHECK_STREAM(stream) if(r != GASPI_SUCCESS) { stream << "Error " << r << " at " << __FILE__ << ':' << __LINE__ \
-                                                            << std::endl; return r; }
-#define ERROR_CHECK if(*info->out){ ERROR_CHECK_STREAM(*info->out) } else { DIE_ON_ERROR_OUT("ERROR_CHECK", \
-                                                                            "*info->out was null.", std::cout) }
+#if (defined (DEBUG) || defined (DEBUG_TEST))
+#define PRINT_DEBUG_TEST(msg) {if(info->out) {*info->out << msg << std::endl; }\
+                                   else std::cout << msg << std::endl; }
+#else
+#define PRINT_DEBUG_TEST(msg)
+#endif
 
-static inline lazygaspi_age_t get_min_age(lazygaspi_age_t current, lazygaspi_age_t slack){
-    return current < slack + 2 ? 1 : current - slack - 1;
+#if (defined (DEBUG) || defined (DEBUG_PERF))
+#define PRINT_DEBUG_PERF(msg) {if(info->out) {*info->out << msg << std::endl; }\
+                                   else std::cout << msg << std::endl; }
+#else
+#define PRINT_DEBUG_PERF(msg)
+#endif
+
+#if defined(DEBUG) || defined(DEBUG_INTERNAL) || defined(DEBUG_TEST) || defined(DEBUG_PERF)
+#define PRINT_DEBUG_OUT(out, msg) { if(out) {*out << msg << std::endl; }\
+                                  else std::cout << msg << std::endl; }
+#define PRINT_DEBUG(msg) PRINT_DEBUG_OUT(info->out, msg)
+#define PRINT_TIMESTAMP { if(info->out){ timestamp(*info->out) << std::endl;}\
+                          else timestamp(std::cout) << std::endl; }
+#else
+#define PRINT_DEBUG_OUT(out, msg)
+#define PRINT_DEBUG(msg)
+#define PRINT_TIMESTAMP
+#endif
+
+static inline lazygaspi_age_t get_min_age(lazygaspi_age_t current, lazygaspi_age_t slack, bool offset_slack){
+    return (current < slack + 1 + offset_slack) ? 1 : (current - slack - offset_slack);
 }
 
 static inline gaspi_offset_t get_row_offset(LazyGaspiProcessInfo* info, lazygaspi_id_t row_id, lazygaspi_id_t table_id){
