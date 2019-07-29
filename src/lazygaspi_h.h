@@ -32,6 +32,9 @@ struct LazyGaspiProcessInfo{
     gaspi_pointer_t rows;
     //Stream used to output lazygaspi debug messages. Use nullptr to ignore lazygaspi output.
     std::ofstream* out;
+    //True if minimum age for read rows will be the current age minus the slack minus 1.
+    //If false, minimum age for read rows will be the current age minus the slack.
+    bool offset_slack = true;
 };
 
 struct LazyGaspiRowData{
@@ -41,11 +44,24 @@ struct LazyGaspiRowData{
     LazyGaspiRowData() : LazyGaspiRowData(0) {}
 };
 
+/** A function used to determine a given size that depends on the current rank and/or total amount of ranks.
+ *  Parameters:
+ *  rank - The current rank, as given by gaspi_proc_rank.
+ *  total - The total number of ranks, as given by gaspi_proc_num.
+ *  data  - User data passed to lazygaspi_init.
+ */
+typedef gaspi_size_t (*SizeDeterminer)(gaspi_rank_t rank, gaspi_rank_t total, void* data);
+
+/**A function that creates and sets the output file stream for the info segment.
+ * Info is guaranteed to have fields `id` and `n` filled before this function is called. 
+ */
+typedef void (*OutputCreator)(LazyGaspiProcessInfo* info);
+
 /** Initializes LazyGASPI.
  * 
  *  Parameters:
- *  table_size   - The amount of rows in one table.
  *  table_amount - The amount of tables.
+ *  table_size   - The amount of rows in one table.
  *  row_size     - The size of a row, in bytes.
  *  output       - True if default output files for each process should be created.
  * 
@@ -53,7 +69,11 @@ struct LazyGaspiRowData{
  *  GASPI_SUCCESS on success, GASPI_ERROR (or another error code) on error, GASPI_TIMEOUT on timeout.
  *  GASPI_ERR_INV_NUM indicates that at least one of the three parameters was 0.
  */
-gaspi_return_t lazygaspi_init(lazygaspi_id_t table_size, lazygaspi_id_t table_amount, gaspi_size_t row_size, bool output = false);
+gaspi_return_t lazygaspi_init(lazygaspi_id_t table_amount, lazygaspi_id_t table_size, gaspi_size_t row_size, 
+                              OutputCreator outputCreator = nullptr,
+                              SizeDeterminer det_amount = nullptr, void* data_amount = nullptr, 
+                              SizeDeterminer det_tablesize = nullptr, void* data_tablesize = nullptr, 
+                              SizeDeterminer det_rowsize = nullptr, void* data_rowsize = nullptr);
 
 /** Outputs a pointer to the "info" segment.
  *  
