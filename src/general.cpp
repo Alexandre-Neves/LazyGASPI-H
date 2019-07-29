@@ -22,9 +22,14 @@ gaspi_return_t lazygaspi_term(){
     LazyGaspiProcessInfo* info;
     auto r = lazygaspi_get_info(&info); ERROR_CHECK;
 
-    r = gaspi_wait(0, GASPI_BLOCK); ERROR_CHECK;
+    PRINT_DEBUG_INTERNAL("Started to terminate LazyGASPI for current process. Waiting for outstanding requests in queue 0...");
 
+    r = gaspi_wait(0, GASPI_BLOCK); ERROR_CHECK;
     r = GASPI_BARRIER; ERROR_CHECK;
+
+    PRINT_DEBUG_INTERNAL("Terminating...\n\n");
+
+    if(info->out) delete info->out;
 
     return gaspi_proc_term(GASPI_BLOCK);
 }
