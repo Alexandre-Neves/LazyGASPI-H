@@ -1,6 +1,8 @@
 #include "lazygaspi_h.h"
 #include "utils.h"
 
+#include <iostream>
+
 gaspi_return_t lazygaspi_get_info(LazyGaspiProcessInfo** info){
     gaspi_pointer_t ptr;
     auto r = gaspi_segment_ptr(SEGMENT_ID_INFO, &ptr);
@@ -29,7 +31,7 @@ gaspi_return_t lazygaspi_term(){
 
     PRINT_DEBUG_INTERNAL("Terminating...\n\n");
 
-    if(info->out) delete info->out;
+    if(info->out && info->out != &std::cout) delete info->out;
 
     return gaspi_proc_term(GASPI_BLOCK);
 }
