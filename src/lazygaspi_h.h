@@ -34,7 +34,7 @@ struct LazyGaspiProcessInfo{
     std::ofstream* out;
     //True if minimum age for read rows will be the current age minus the slack minus 1.
     //If false, minimum age for read rows will be the current age minus the slack.
-    bool offset_slack = true;
+    bool offset_slack;
 };
 
 struct LazyGaspiRowData{

@@ -45,6 +45,7 @@ gaspi_return_t lazygaspi_init(lazygaspi_id_t table_amount, lazygaspi_id_t table_
     info->table_size = table_size;
     info->table_amount = table_amount;
     info->row_size = row_size;
+    info->offset_slack = true;
 
     r = gaspi_malloc_noblock(SEGMENT_ID_ROWS, table_amount * table_size * (row_size + sizeof(LazyGaspiRowData)), &(info->rows), 
                              GASPI_MEM_INITIALIZED);
