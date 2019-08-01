@@ -31,7 +31,7 @@ struct LazyGaspiProcessInfo{
     //A pointer to the first row.
     gaspi_pointer_t rows;
     //Stream used to output lazygaspi debug messages. Use nullptr to ignore lazygaspi output.
-    std::ofstream* out;
+    std::ostream* out;
     //True if minimum age for read rows will be the current age minus the slack minus 1.
     //If false, minimum age for read rows will be the current age minus the slack.
     bool offset_slack;
