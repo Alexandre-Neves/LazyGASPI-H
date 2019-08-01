@@ -4,15 +4,16 @@
 #include <iostream>
 
 gaspi_return_t lazygaspi_get_info(LazyGaspiProcessInfo** info){
-    gaspi_pointer_t ptr;
-    auto r = gaspi_segment_ptr(SEGMENT_ID_INFO, &ptr);
-    *info = (LazyGaspiProcessInfo*)ptr;
-    return r;
-}
+    if(info == nullptr){
+        PRINT_DEBUG_INTERNAL_COUT("Tried to get info segment with nullptr.");
+        return GASPI_ERR_NULLPTR;
+    }
+    return gaspi_segment_ptr(SEGMENT_ID_INFO, (gaspi_pointer_t*)info);
+}   
 
 gaspi_return_t lazygaspi_clock(){
     LazyGaspiProcessInfo* info;
-    auto r = lazygaspi_get_info(&info); ERROR_CHECK;
+    auto r = lazygaspi_get_info(&info); ERROR_CHECK_COUT;
     info->age++;
 
     PRINT_DEBUG("Incremented age to " << info->age);
@@ -22,7 +23,7 @@ gaspi_return_t lazygaspi_clock(){
 
 gaspi_return_t lazygaspi_term(){
     LazyGaspiProcessInfo* info;
-    auto r = lazygaspi_get_info(&info); ERROR_CHECK;
+    auto r = lazygaspi_get_info(&info); ERROR_CHECK_COUT;
 
     PRINT_DEBUG_INTERNAL("Started to terminate LazyGASPI for current process. Waiting for outstanding requests in queue 0...");
 
