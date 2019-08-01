@@ -6,7 +6,7 @@
 
 gaspi_return_t lazygaspi_write(lazygaspi_id_t row_id, lazygaspi_id_t table_id, void* row){
     LazyGaspiProcessInfo* info;
-    auto r = lazygaspi_get_info(&info); ERROR_CHECK;
+    auto r = lazygaspi_get_info(&info); ERROR_CHECK_COUT;
     
     const auto offset = get_row_offset(info, row_id, table_id);
     auto data = (LazyGaspiRowData*)((char*)info->rows + offset);

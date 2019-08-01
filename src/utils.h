@@ -17,38 +17,31 @@
 #define NOTIF_ID_ROW_WRITTEN 0
 
 #if (defined (DEBUG) || defined (DEBUG_INTERNAL))
-#define PRINT_DEBUG_INTERNAL_OUT(out, msg) if(out){ *out << msg << std::endl; }\
-                                           else{ std::cout << msg << std::endl; }
-#define PRINT_DEBUG_INTERNAL(msg) PRINT_DEBUG_INTERNAL_OUT(info->out, msg)
+#define PRINT_DEBUG_INTERNAL(msg) *info->out << msg << std::endl
+#define PRINT_DEBUG_INTERNAL_COUT(msg) std::cout << msg << std::endl
 #else
-#define PRINT_DEBUG_INTERNAL_OUT(out, msg)
 #define PRINT_DEBUG_INTERNAL(msg)
+#define PRINT_DEBUG_INTERNAL_COUT(msg)
 #endif
 
 #if (defined (DEBUG) || defined (DEBUG_TEST))
-#define PRINT_DEBUG_TEST(msg) {if(info->out) {*info->out << msg << std::endl; }\
-                                   else std::cout << msg << std::endl; }
+#define PRINT_DEBUG_TEST(msg) *info->out << msg << std::endl
 #else
 #define PRINT_DEBUG_TEST(msg)
 #endif
 
 #if (defined (DEBUG) || defined (DEBUG_PERF))
-#define PRINT_DEBUG_PERF(msg) {if(info->out) {*info->out << msg << std::endl; }\
-                                   else std::cout << msg << std::endl; }
+#define PRINT_DEBUG_PERF(msg) *info->out << msg << std::endl
 #else
 #define PRINT_DEBUG_PERF(msg)
 #endif
 
-#if defined(DEBUG) || defined(DEBUG_INTERNAL) || defined(DEBUG_TEST) || defined(DEBUG_PERF)
-#define PRINT_DEBUG_OUT(out, msg) { if(out) {*out << msg << std::endl; }\
-                                  else std::cout << msg << std::endl; }
-#define PRINT_DEBUG(msg) PRINT_DEBUG_OUT(info->out, msg)
-#define PRINT_TIMESTAMP { if(info->out){ timestamp(*info->out) << std::endl;}\
-                          else timestamp(std::cout) << std::endl; }
+#if defined DEBUG || defined DEBUG_PERF || defined DEBUG_TEST || defined DEBUG_INTERNAL
+#define PRINT_DEBUG(msg) *info->out << msg << std::endl
+#define PRINT_DEBUG_COUT(msg) std::cout << msg << std::endl
 #else
-#define PRINT_DEBUG_OUT(out, msg)
 #define PRINT_DEBUG(msg)
-#define PRINT_TIMESTAMP
+#define PRINT_DEBUG_COUT(msg)
 #endif
 
 static inline lazygaspi_age_t get_min_age(lazygaspi_age_t current, lazygaspi_age_t slack, bool offset_slack){
