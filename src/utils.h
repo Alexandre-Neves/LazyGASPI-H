@@ -44,6 +44,12 @@
 #define PRINT_DEBUG_COUT(msg)
 #endif
 
+#ifdef WITH_MPI
+#include <mpi.h>
+#define ERROR_MPI_CHECK_COUT(msg) {if(ret != MPI_SUCCESS){ std::cout << "Error " << ret << " at [" << __FILE__ << ':' << __LINE__ << "] \
+                              from MPI: " << msg << std::endl; return GASPI_ERROR; }}
+#endif
+
 static inline lazygaspi_age_t get_min_age(lazygaspi_age_t current, lazygaspi_age_t slack, bool offset_slack){
     return (current < slack + 1 + offset_slack) ? 1 : (current - slack - offset_slack);
 }
