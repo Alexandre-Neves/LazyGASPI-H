@@ -1,6 +1,6 @@
 #include "lazygaspi_h.h"
-#include "utils.h"
 #include "gaspi_utils.h"
+#include "utils.h"
 
 #include <cstring>
 
