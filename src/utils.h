@@ -10,11 +10,17 @@
 #include <thread>
 #include <utility>
 
-#include "typedefs.h"
 #include "lazygaspi_h.h"
 #include "gaspi_utils.h"
 
 #define NOTIF_ID_ROW_WRITTEN 0
+
+typedef unsigned int uint;
+typedef unsigned char byte;
+typedef unsigned long ulong;
+
+#define subsizeof(STRUCT, MEMBER_BEGIN, MEMBER_END) (offsetof(STRUCT, MEMBER_END) + sizeof(decltype(std::declval<STRUCT>().MEMBER_END)) - offsetof(STRUCT, MEMBER_BEGIN))
+#define sizeofmember(STRUCT, MEMBER) sizeof((( STRUCT *)0)-> MEMBER)
 
 #if (defined (DEBUG) || defined (DEBUG_INTERNAL))
 #define PRINT_DEBUG_INTERNAL(msg) *info->out << msg << std::endl
