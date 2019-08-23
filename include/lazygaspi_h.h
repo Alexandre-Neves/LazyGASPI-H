@@ -30,6 +30,8 @@ struct LazyGaspiProcessInfo{
     gaspi_size_t row_size;
     //A pointer to the first row.
     gaspi_pointer_t rows;
+    //Used by the lock
+    gaspi_atomic_value_t communicator;
     //Stream used to output lazygaspi debug messages. Use nullptr to ignore lazygaspi output.
     std::ostream* out;
     //True if minimum age for read rows will be the current age minus the slack minus 1.
