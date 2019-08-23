@@ -4,8 +4,8 @@
 #include <GASPI.h>
 #include <fstream>
 
-#define SEGMENT_ID_INFO 0 
-#define SEGMENT_ID_ROWS 1
+#define LAZYGASPI_ID_INFO 0 
+#define LAZYGASPI_ID_ROWS 1
 
 #define FIRST_SEG_ID_AVAIL 2
 
