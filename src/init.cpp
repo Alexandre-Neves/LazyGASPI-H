@@ -43,7 +43,7 @@ gaspi_return_t lazygaspi_init(lazygaspi_id_t table_amount, lazygaspi_id_t table_
     }
     #endif
 
-    if(info->n == 0) return GASPI_ERR_INV_NUM;
+    if(info->n == 0) return GASPI_ERR_INV_RANK;
     if(outputCreator){
         outputCreator(info);
         if(info->out == nullptr){
