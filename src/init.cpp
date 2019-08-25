@@ -2,13 +2,11 @@
 #include "gaspi_utils.h"
 #include "utils.h"
 
-
 gaspi_return_t lazygaspi_init(lazygaspi_id_t table_amount, lazygaspi_id_t table_size, gaspi_size_t row_size, 
                               OutputCreator outputCreator,
                               SizeDeterminer det_amount, void* data_amount, 
                               SizeDeterminer det_tablesize, void* data_tablesize, 
                               SizeDeterminer det_rowsize, void* data_rowsize){
-
     #ifdef WITH_MPI
     int mpi_rank, mpi_rank_amount;
     {
@@ -28,7 +26,7 @@ gaspi_return_t lazygaspi_init(lazygaspi_id_t table_amount, lazygaspi_id_t table_
     auto r = gaspi_proc_init(GASPI_BLOCK); ERROR_CHECK_COUT;
 
     LazyGaspiProcessInfo* info;
-    r = gaspi_malloc_noblock(SEGMENT_ID_INFO, sizeof(LazyGaspiProcessInfo), &info, GASPI_MEM_INITIALIZED);
+    r = gaspi_malloc_noblock(LAZYGASPI_ID_INFO, sizeof(LazyGaspiProcessInfo), &info, GASPI_MEM_INITIALIZED);
     ERROR_CHECK_COUT;
 
     r = gaspi_proc_rank(&(info->id)); ERROR_CHECK_COUT;
@@ -78,7 +76,7 @@ gaspi_return_t lazygaspi_init(lazygaspi_id_t table_amount, lazygaspi_id_t table_
     info->row_size = row_size;
     info->offset_slack = true;
 
-    r = gaspi_malloc_noblock(SEGMENT_ID_ROWS, table_amount * table_size * (row_size + sizeof(LazyGaspiRowData)), &(info->rows), 
+    r = gaspi_malloc_noblock(LAZYGASPI_ID_ROWS, table_amount * table_size * ROW_ENTRY_SIZE_WITH_LOCK, &(info->rows), 
                              GASPI_MEM_INITIALIZED);
     ERROR_CHECK_COUT;
 

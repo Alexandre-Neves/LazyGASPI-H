@@ -4,13 +4,13 @@
 #include <GASPI.h>
 #include <fstream>
 
-#define SEGMENT_ID_INFO 0 
-#define SEGMENT_ID_ROWS 1
+#define LAZYGASPI_ID_INFO 0 
+#define LAZYGASPI_ID_ROWS 1
 
 #define FIRST_SEG_ID_AVAIL 2
 
 typedef unsigned long lazygaspi_id_t;
-typedef unsigned long lazygaspi_age_t;
+typedef gaspi_atomic_value_t lazygaspi_age_t;
 typedef unsigned long lazygaspi_slack_t;
 
 //None of the fields in this structure should be altered, except for the out field.
@@ -30,6 +30,8 @@ struct LazyGaspiProcessInfo{
     gaspi_size_t row_size;
     //A pointer to the first row.
     gaspi_pointer_t rows;
+    //Used by the lock
+    gaspi_atomic_value_t communicator;
     //Stream used to output lazygaspi debug messages. Use nullptr to ignore lazygaspi output.
     std::ostream* out;
     //True if minimum age for read rows will be the current age minus the slack minus 1.
