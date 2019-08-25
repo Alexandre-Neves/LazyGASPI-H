@@ -10,7 +10,7 @@
 #define FIRST_SEG_ID_AVAIL 2
 
 typedef unsigned long lazygaspi_id_t;
-typedef unsigned long lazygaspi_age_t;
+typedef gaspi_atomic_value_t lazygaspi_age_t;
 typedef unsigned long lazygaspi_slack_t;
 
 //None of the fields in this structure should be altered, except for the out field.
