@@ -52,7 +52,14 @@ gaspi_return_t lazygaspi_read(lazygaspi_id_t row_id, lazygaspi_id_t table_id, la
                               LazyGaspiRowData* outData){
     LazyGaspiProcessInfo* info;
     auto r = lazygaspi_get_info(&info); ERROR_CHECK_COUT;
-
+    if(row == nullptr){
+        PRINT_DEBUG_INTERNAL("Tried to read row into a nullptr.");
+        return GASPI_ERR_NULLPTR;
+    }
+    if(row_id >= info->table_size || table_id >= info->table_amount){
+        PRINT_ON_ERROR(" | Error: row/table ID was out of bounds.");
+        return GASPI_ERR_INV_NUM;
+    }
     const auto offset = get_row_offset(info, row_id, table_id);
 
     #ifdef LOCKED_OPERATIONS
